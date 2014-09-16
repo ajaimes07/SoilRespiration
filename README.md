@@ -3,11 +3,10 @@ SoilRespiration
 
 Project:Synthesis of Soil Respiration data
 
-Collaborators
-
-Aline Jaimes
-Rodrigo Vargas
-Benjamin Bond-Lamberty
+Collaborators:
+Aline Jaimes;
+Rodrigo Vargas;
+Benjamin Bond-Lamberty;
 
 Set of functions to evaluate the capacity of predicting daytime and nighttime SR and assess the “predictive power” of SR under different moisture conditions across vegetation types.
 
