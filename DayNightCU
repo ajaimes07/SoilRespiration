@@ -1,0 +1,245 @@
+% Aline Jaimes
+% 07/16/2014
+% function to separate day and night
+% Day= 6am-6pm;
+
+% a=RS; b=TA; zz=SWC; ff=R; gg=NEE;
+
+% function [night_NEE, night_SR,day_SR,day_NEE]=DayNightV1(a, gg);
+% function [day_NEE, day_SR, day_Reco, day_TA, day_SWC, night_NEE, night_SR,night_TA, night_Reco,night_SWC]=DayNightV2(a, gg, b, ff,zz);
+
+function [day_NEE, day_SR, day_Reco, day_TA, day_SWC, night_NEE, night_SR,night_TA, night_Reco,night_SWC]=DayNightCU(a, gg, b, ff,zz,cu_id,fname);
+% while m < N
+% m = 1; kk = 1; 
+
+[M N] = size(a);
+day_A=[];   night_A=[]; %   RS    
+day_B=[];   night_B=[]; %   NEE
+day_C=[];   night_C=[]; %   TA
+day_D=[];   night_D=[]; %   Reco
+day_F=[];   night_F=[]; %   SWC
+
+        % a   Fs_efflux
+        day_A=a(6:17,:);
+            dayA_cu=day_A(:,cu_id);
+        night1A=a(1:5,:);
+        night2A=a(18:24,:);
+        night_A=[night1A;night2A];
+            nightA_cu=night_A(:,cu_id);
+         
+        % gg   NEE
+        day_B=gg(6:17,:);
+            dayB_cu=day_B(:,cu_id);
+        night1B=gg(1:5,:);
+        night2B=gg(18:24,:);
+        night_B=[night1B;night2B];
+            night_Bcu=night_B(:,cu_id);
+        
+        % b   TA
+        day_C=b(6:17,:);
+            dayC_cu=day_C(:,cu_id);
+        night1C=b(1:5,:);
+        night2C=b(18:24,:);
+        night_C=[night1C;night2C];
+            nightC_cu=night_C(:,cu_id);
+        
+        % ff   Reco
+        day_D=ff(6:17,:);
+            dayD_cu=day_D(:,cu_id);
+        night1D=ff(1:5,:);
+        night2D=ff(18:24,:);
+        night_D=[night1D;night2D];
+            nightD_cu=night_D(:,cu_id);
+        
+        % zz   SWC
+        day_F=zz(6:17,:);
+            dayF_cu=day_F(:,cu_id);
+        night1F=zz(1:5,:);
+        night2F=zz(18:24,:);
+        night_F=[night1D;night2D];
+            nightF_cu=night_F(:,cu_id);
+% end
+
+day_NEE=dayB_cu(:);       %   NEE
+night_NEE=night_Bcu(:);   %   NEE
+
+day_SR=dayA_cu(:);        %   SR
+night_SR=nightA_cu(:);    %   SR
+
+day_Reco=dayD_cu(:);      %   Reco
+night_Reco=nightD_cu(:);  %   Reco
+
+day_TA=dayC_cu(:);        %   TA
+night_TA=nightC_cu(:);    %   TA
+
+day_SWC=dayF_cu(:);       %   SWC
+night_SWC=nightF_cu(:);   %   SWC
+
+
+% START FIGURE 4
+figure
+xmin=0; xmax=35; ymin=-35; ymax=35;
+
+subplot(2,3,1)
+plot(night_Reco,night_NEE,'x');hold on; 
+% [r2,ypredict,p] = rsquared_v2(night_Reco,night_NEE,1);
+[a1,b1]= robustfit(night_Reco,night_NEE); hold on 
+[r2,yfit,p,rmse,pvalue] = rsquared_v1(night_Reco,night_NEE,1);
+plot(night_Reco,a1(1)+a1(2).*night_Reco,'r');hold on 
+axis([xmin xmax ymin ymax])
+title('NIGHTTIME','FontName','Times New Roman','fontsize',12,'fontweight','b','color','k')
+ylabel('NEE(umolCO_2m^2/hr)','FontName','Times New Roman', 'fontsize',10,'fontweight','b','color','k'); 
+xlabel('Reco(umolCO_2m^2/hr)','FontName','Times New Roman', 'fontsize',10,'fontweight','b','color','k');
+text(10,30,['$R^2 = ' num2str(r2) '$'],'interpreter','Latex');
+text(10,25,['$p-value = ' num2str(pvalue) '$'],'interpreter','Latex');
+text(10,20,['$Slope = ' num2str(p(1)) '$'],'interpreter','Latex');
+text(10,15,['$Intercept = ' num2str(p(2)) '$'],'interpreter','Latex');
+text(10,10,['$RMSE = ' num2str(rmse) '$'],'interpreter','Latex');
+hold off
+
+% subplot(2,2,3)
+subplot(2,3,4)
+plot(day_Reco,day_NEE,'x'); hold on
+[r2,yfit,p,rmse,pvalue] = rsquared_v1(day_Reco,day_NEE,1);
+[a3,b3]= robustfit(day_Reco,day_NEE); hold on 
+plot(day_Reco,a3(1)+a3(2).*day_Reco,'r');hold on 
+hold on 
+axis([xmin xmax ymin ymax])
+hold on; 
+% grid on;
+title('DAYTTIME','FontName','Times New Roman','fontsize',12,'fontweight','b','color','k')
+ylabel('NEE(umolCO_2m^2/hr)','FontName','Times New Roman', 'fontsize',10,'fontweight','b','color','k'); 
+xlabel('Reco(umolCO_2m^2/hr)','FontName','Times New Roman', 'fontsize',10,'fontweight','b','color','k');
+text(10,30,['$R^2 = ' num2str(r2) '$'],'interpreter','Latex');
+text(10,25,['$p-value = ' num2str(pvalue) '$'],'interpreter','Latex');
+text(10,20,['$Slope = ' num2str(p(1)) '$'],'interpreter','Latex');
+text(10,15,['$Intercept = ' num2str(p(2)) '$'],'interpreter','Latex');
+text(10,10,['$RMSE = ' num2str(rmse) '$'],'interpreter','Latex');
+hold off
+% subplot(2,2,2)
+subplot(2,3,2)
+plot(night_SR,night_NEE,'x'); hold on; 
+[r2,yfit,p,rmse,pvalue] = rsquared_v1(night_SR,night_NEE,1);
+[a2,b2]= robustfit(night_SR,night_NEE); hold on 
+plot(night_SR,a2(1)+a2(2).*night_SR,'r');hold on 
+axis([xmin xmax ymin ymax])
+ylabel('NEE(umolCO_2m^2/hr)','FontName','Times New Roman', 'fontsize',10,'fontweight','b','color','k'); 
+xlabel('Rs(umolCO_2m^2/hr)','FontName','Times New Roman', 'fontsize',10,'fontweight','b','color','k');
+text(10,30,['$R^2 = ' num2str(r2) '$'],'interpreter','Latex');
+text(10,25,['$p-value = ' num2str(pvalue) '$'],'interpreter','Latex');
+text(10,20,['$Slope = ' num2str(p(1)) '$'],'interpreter','Latex');
+text(10,15,['$Intercept = ' num2str(p(2)) '$'],'interpreter','Latex');
+text(10,10,['$RMSE = ' num2str(rmse) '$'],'interpreter','Latex');
+hold off
+
+subplot(2,3,5)
+plot(day_SR,day_NEE,'x')
+[r2,yfit,p,rmse,pvalue] = rsquared_v1(day_SR,day_NEE,1);
+[a4,b4]= robustfit(day_SR,day_NEE); hold on 
+plot(day_SR,a4(1)+a4(2).*day_SR,'r');hold on 
+hold on 
+axis([xmin xmax ymin ymax])
+ylabel('NEE(umolCO_2m^2/hr)','FontName','Times New Roman', 'fontsize',10,'fontweight','b','color','k'); 
+xlabel('Rs(umolCO_2m^2/hr)','FontName','Times New Roman', 'fontsize',10,'fontweight','b','color','k');
+text(10,30,['$R^2 = ' num2str(r2) '$'],'interpreter','Latex');
+text(10,25,['$p-value = ' num2str(pvalue) '$'],'interpreter','Latex');
+text(10,20,['$Slope = ' num2str(p(1)) '$'],'interpreter','Latex');
+text(10,15,['$Intercept = ' num2str(p(2)) '$'],'interpreter','Latex');
+text(10,10,['$RMSE = ' num2str(rmse) '$'],'interpreter','Latex');
+hold off
+
+subplot(2,3,3)
+plot(night_SR,night_Reco,'x'); hold on; 
+[r2,yfit,p,rmse,pvalue] = rsquared_v1(night_SR,night_Reco,1);
+[a5,b5]= robustfit(night_SR,night_Reco); hold on 
+plot(night_SR,a5(1)+a5(2).*night_SR,'r');hold on 
+axis([xmin xmax ymin ymax])
+ylabel('Reco(umolCO_2m^2/hr)','FontName','Times New Roman', 'fontsize',10,'fontweight','b','color','k'); 
+xlabel('Rs(umolCO_2m^2/hr)','FontName','Times New Roman', 'fontsize',10,'fontweight','b','color','k');
+text(10,30,['$R^2 = ' num2str(r2) '$'],'interpreter','Latex');
+text(10,25,['$p-value = ' num2str(pvalue) '$'],'interpreter','Latex');
+text(10,20,['$Slope = ' num2str(p(1)) '$'],'interpreter','Latex');
+text(10,15,['$Intercept = ' num2str(p(2)) '$'],'interpreter','Latex');
+text(10,10,['$RMSE = ' num2str(rmse) '$'],'interpreter','Latex');
+hold off
+
+subplot(2,3,6)
+plot(day_SR,day_Reco,'x')
+hold on; 
+[r2,yfit,p,rmse,pvalue] = rsquared_v1(day_SR,day_Reco,1);
+[a6,b6]= robustfit(day_SR,day_Reco); hold on 
+plot(night_SR,a6(1)+a6(2).*night_SR,'r');hold on 
+axis([xmin xmax ymin ymax])
+ylabel('Reco(umolCO_2m^2/hr)','FontName','Times New Roman', 'fontsize',10,'fontweight','b','color','k'); 
+xlabel('Rs(umolCO_2m^2/hr)','FontName','Times New Roman', 'fontsize',10,'fontweight','b','color','k');
+text(10,30,['$R^2 = ' num2str(r2) '$'],'interpreter','Latex');
+text(10,25,['$p-value = ' num2str(pvalue) '$'],'interpreter','Latex');
+text(10,20,['$Slope = ' num2str(p(1)) '$'],'interpreter','Latex');
+text(10,15,['$Intercept = ' num2str(p(2)) '$'],'interpreter','Latex');
+text(10,10,['$RMSE = ' num2str(rmse) '$'],'interpreter','Latex');
+hold off
+% ============END FIGURE 3, 4,5
+
+% =========== START FIGURE 6
+figure
+set(gcf,'NumberTitle', 'off', 'Name', fname)
+xnmin=-35; xnmax=35; ynmin=-35; ynmax=35;
+
+subplot(2,3,1)
+plot(night_NEE,day_NEE,'x')
+hold on; 
+% [r2,~,p2] = rsquared_v1(night_NEE,day_NEE,1);
+[r2,yfit,p,rmse,pvalue] = rsquared_v1(night_NEE,day_NEE,1);
+[a2,b2]= robustfit(night_NEE,day_NEE); hold on 
+plot(night_NEE,a2(1)+a2(2).*night_NEE,'r');hold on
+
+axis([xnmin xnmax ynmin ynmax])
+% title('US MOz','fontsize',14,'fontweight','b','color','k')
+ylabel('day NEE(umolCO_2m^2/hr)','fontsize',10,'fontweight','b','color','k'); 
+xlabel('night NEE(umolCO_2m^2/hr)','fontsize',10,'fontweight','b','color','k');
+text(-30,32,['$R^2 = ' num2str(r2) '$'],'interpreter','Latex');
+text(-30,28,['$p-value = ' num2str(pvalue) '$'],'interpreter','Latex');
+text(-30,24,['$Slope = ' num2str(p(1)) '$'],'interpreter','Latex');
+text(-30,20,['$Intercept = ' num2str(p(2)) '$'],'interpreter','Latex');
+text(-30,16,['$RMSE = ' num2str(rmse) '$'],'interpreter','Latex');
+hold off
+
+
+xmin=0; xmax=35; ymin=0; ymax=35;
+subplot(2,3,2)
+plot(night_Reco,day_Reco,'x')
+hold on; 
+[r2,yfit,p,rmse,pvalue] = rsquared_v1(night_Reco,day_Reco,1);
+[a3,b3]= robustfit(night_Reco,day_Reco); hold on 
+plot(night_Reco,a3(1)+a3(2).*night_Reco,'r');hold on
+axis([xmin xmax ymin ymax])
+title( fname,'fontsize',14,'fontweight','b','color','k')
+ylabel('Reco day(umolCO_2m^2/hr)','fontsize',10,'fontweight','b','color','k'); 
+xlabel('Reco night(umolCO_2m^2/hr)','fontsize',10,'fontweight','b','color','k');
+text(1,33,['$R^2 = ' num2str(r2) '$'],'interpreter','Latex');
+text(1,30,['$p-value = ' num2str(pvalue) '$'],'interpreter','Latex');
+text(1,27,['$Slope = ' num2str(p(1)) '$'],'interpreter','Latex');
+text(1,24,['$Intercept = ' num2str(p(2)) '$'],'interpreter','Latex');
+text(1,21,['$RMSE = ' num2str(rmse) '$'],'interpreter','Latex');
+hold off
+
+subplot(2,3,3)
+plot(night_SR,day_SR,'x')
+hold on; 
+[r2,yfit,p,rmse,pvalue] = rsquared_v1(night_SR,day_SR,1);
+[a4,b4]= robustfit(night_SR,day_SR); hold on 
+plot(night_SR,a4(1)+a4(2).*night_SR,'r');hold on
+axis([xmin xmax ymin ymax])
+% title('US MOz','fontsize',14,'fontweight','b','color','k')
+ylabel('SR day(umolCO_2m^2/hr)','fontsize',10,'fontweight','b','color','k'); 
+xlabel('SR night(umolCO_2m^2/hr)','fontsize',10,'fontweight','b','color','k');
+text(1,33,['$R^2 = ' num2str(r2) '$'],'interpreter','Latex');
+text(1,30,['$p-value = ' num2str(pvalue) '$'],'interpreter','Latex');
+text(1,27,['$Slope = ' num2str(p(1)) '$'],'interpreter','Latex');
+text(1,24,['$Intercept = ' num2str(p(2)) '$'],'interpreter','Latex');
+text(1,21,['$RMSE = ' num2str(rmse) '$'],'interpreter','Latex');
+hold off
+
+% saveas(gcf,fname,'png')
+% END FIGURE 6
+end
