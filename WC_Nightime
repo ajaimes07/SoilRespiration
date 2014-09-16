@@ -1,0 +1,28 @@
+% clear
+% load  Finland_2008_1h
+% FIN=[F0,NEE, Ta,Reco, SWC;];
+% clearvars -except FIN
+% NEE=FIN(:,2); RS=FIN(:,1); TA=FIN(:,3); R=FIN(:,4); SWC=FIN(:,5);
+
+
+% function [XLw,YLw,Xhw,Yhw]=WetnessConditions(SWC, NEE, R);
+% function [XLw,YLw,Xhw,Yhw,XhwTA,YhwRS,XLwTA,YLwRS]=WetnessConditions(SWC, NEE, R, TA, RS)
+% function [NEEMeanWetd,NEEHighWetd,NEELowWetd,RMeanWetd,RHighWetd,RLowWetd,RSMeanWetd,RSHighWetd,RSLowWetd,TAMeanWetd,TAHighWetd,TALowWetd]=WetnessConditionsdaytime(NEEupd,Recoupd,SRupd,TAupd,SWCupd);
+ function [NEEMeanWet,NEEHighWet,NEELowWet,RMeanWet,RHighWet,RLowWet,RSMeanWet,RSHighWet,RSLowWet,TAMeanWet,TAHighWet,TALowWet]=WC_Nightime(night_NEE, night_SR, night_Reco, night_TA, night_SWC);
+
+% Defining Mean ,Max, and Min Humidity
+mean_theta=nanmean(night_SWC); std_theta=nanstd(night_SWC);
+x1=mean_theta+std_theta;
+x2=mean_theta-std_theta;
+% max_theta=nanmax(SWC); min_theta=nanmin(SWC);
+
+MeanWet=(night_SWC<x1 & night_SWC>x2);
+LowWet= (night_SWC<x2);
+HighWet=(night_SWC>x1);
+
+NEEMeanWet=night_NEE(MeanWet);      NEEHighWet=night_NEE(HighWet);      NEELowWet=night_NEE(LowWet);
+RMeanWet=night_Reco(MeanWet);       RHighWet=night_Reco(HighWet);       RLowWet=night_Reco(LowWet);
+RSMeanWet=night_SR(MeanWet);        RSHighWet=night_SR(HighWet);        RSLowWet=night_SR(LowWet);
+TAMeanWet=night_TA(MeanWet);        TAHighWet=night_TA(HighWet);        TALowWet=night_TA(LowWet);
+end
+
