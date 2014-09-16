@@ -1,0 +1,71 @@
+% Aline Jaimes
+% 07112014
+% function to generate colormaps
+% datar=hourlydata
+% Output: 
+% a- Fs_effluxr
+% b- Tairr
+% zz-SWCr
+% t- time- MATRIX
+% D- doy- MATRIX
+function  [a,b,zz,gg,ff]=colormapsV2(TA,RS,R,NEE,SWC);
+% function ColorMap=colormaps(datar)
+% timeo= datar(:,1); Fs_eflux= datar(:,2); Tair= datar(:,3);   SWC= datar(:,4);
+
+a=[];b=[];zz=[];d=[]; f=[]; gg=[];
+mperday=24;
+N=length(TA);
+hrs=24;
+nday=N/hrs
+time = 0:1:23;
+doy = 1:nday;
+[D t] = meshgrid (doy,time);
+a=reshape(RS,mperday,nday); 
+b=reshape(TA,mperday,nday);
+zz=reshape(SWC,mperday,nday); 
+ff=reshape(R,mperday,nday); 
+gg=reshape(NEE,mperday,nday); 
+
+figure
+set(gcf,'NumberTitle', 'off', 'Name', 'Finland_2008_1h')
+
+% subplot(2,2,1)
+subplot(2,3,1)
+pcolor(D,t,gg); shading interp; hold on; 
+% [c,h] = contour(D,t,zz); hold on;  colormap jet
+hold on; Z=colorbar; caxis('auto')
+% caxis([-25 50])
+set(get(Z,'ylabel'),'string','NEE [umolm^2hr^-^1]','Fontsize',12, 'fontweight','b','color','k') 
+
+% subplot(2,2,2)
+subplot(2,3,2)
+pcolor(D,t,ff); shading interp; hold on; 
+% [c,h] = contour(D,t,zz); hold on;  colormap jet
+hold on; Z=colorbar; caxis('auto')
+% caxis([-25 50])
+set(get(Z,'ylabel'),'string','Reco [umolm^2hr^-^1]','Fontsize',12,'fontweight','b','color','k') 
+
+subplot(2,3,3)
+% subplot(2,2,4)
+pcolor(D,t,a); shading interp; hold on; 
+% [c,h] = contour(D,t,a); hold on;  colormap jet
+hold on; Z=colorbar; caxis('auto')
+% caxis([-25 50])
+set(get(Z,'ylabel'),'string','Fs efflux [umolm^2hr^-^1]','Fontsize',12,'fontweight','b','color','k') 
+
+subplot(2,2,3)
+pcolor(D,t,b); shading interp; hold on; 
+[c,h] = contour(D,t,b); hold on;  colormap jet
+hold on; Z=colorbar; caxis('auto')
+% caxis([-25 50])
+set(get(Z,'ylabel'),'string','Tair [C]','Fontsize',12,'fontweight','b','color','k')
+xlabel('DOY'); ylabel('Time of the Day')
+
+subplot(2,2,4)
+pcolor(D,t,zz); shading interp; hold on; 
+[c,h] = contour(D,t,zz); hold on;  colormap jet
+hold on; Z=colorbar; caxis('auto')
+% caxis([-25 50])
+set(get(Z,'ylabel'),'string','VWC [cm^3/cm^3]','Fontsize',12,'fontweight','b','color','k')
+xlabel('DOY'); ylabel('Time of the Day')
+end
