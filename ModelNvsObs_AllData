@@ -1,0 +1,93 @@
+% DAYTIME EUATION TO  MODEL NIGHTIME KR
+function [KrN_MH,KrD_MH,KrN_HH,KrD_HH,KrN_LH,KrD_LH]=ModelNvsObs(Q10MeanD,Q10HighD,Q10LowD,T1,T2,T3,T4,T5,T6,C1,C2,C3,fname);
+%     if fname(1)=='F'
+%         elseif fname(1)=='S'
+%         else
+%     end
+% T1,T2,T3 = Daytime temperature
+% T4,T5,T6 = Nightime temperature 
+
+% idT=33; % Shortest vector of temp- ONLY FINLAND
+% idT=26; % Shortest vector of temp- ONLY STU
+idT=41; % Shortest vector of temp- ONLY US_MOz
+
+T1=T1(1:idT);
+T2=T2(1:idT);
+T3=T3(1:idT);
+T4=T4(1:idT);
+T5=T5(1:idT);
+T6=T6(1:idT);
+
+% Mean Humidity (MH)
+KrN_MH=C1*(Q10MeanD.^T1);
+KrD_MH=C1*(Q10MeanD.^T4);
+
+
+% HIGH Humidity (HH) 
+KrN_HH=C2*(Q10HighD.^T2);
+KrD_HH=C2*(Q10HighD.^T5);
+
+% LOW Humidity (LH)
+KrN_LH=C3*(Q10LowD.^T3);
+KrD_LH=C3*(Q10LowD.^T6);
+
+figure
+set(gcf,'NumberTitle', 'off', 'Name', 'NIGHTIME MODELED VS DAYTIME FUNCTION')
+xnmin=0; xnmax=20; ynmin=0; ynmax=20;
+
+subplot(2,3,1)
+e = std(KrD_MH)*ones(size(KrN_MH));
+confplot(KrN_MH,KrD_MH,e); hold on
+plot(KrN_MH,KrD_MH,'r'); hold on; 
+[r2,yfit,p,rmse,pvalue] = rsquared_v1(KrN_MH,KrD_MH,1);
+[a2,b2]= robustfit(KrN_MH,KrD_MH); hold on 
+plot(KrN_MH,a2(1)+a2(2).*KrN_MH,'r');hold on
+axis([xnmin xnmax ynmin ynmax])
+title('Mean Wetness','fontsize',10,'fontweight','b','color','k')
+ylabel('Modeled Night Kr','fontsize',10,'fontweight','b','color','k'); 
+xlabel('Day Kr)','fontsize',10,'fontweight','b','color','k');
+text(1,19.5,['$R^2 = ' num2str(r2) '$'],'interpreter','Latex');
+text(1,18,['$p-value = ' num2str(pvalue) '$'],'interpreter','Latex');
+text(1,17,['$Slope = ' num2str(p(1)) '$'],'interpreter','Latex');
+text(1,16,['$Intercept = ' num2str(p(2)) '$'],'interpreter','Latex');
+text(1,15,['$RMSE = ' num2str(rmse) '$'],'interpreter','Latex');
+hold off
+
+subplot(2,3,2)
+e = std(KrD_HH)*ones(size(KrN_HH));
+confplot(KrN_HH,KrD_HH,e); hold on
+plot(KrN_HH,KrD_HH,'r'); hold on; 
+% plot(KrN_HH,KrD_HH,'x'); hold on; 
+[r2,yfit,p,rmse,pvalue] = rsquared_v1(KrN_HH,KrD_HH,1);
+[a2,b2]= robustfit(KrN_HH,KrD_HH); hold on 
+plot(KrN_HH,a2(1)+a2(2).*KrN_HH,'r');hold on
+axis([xnmin xnmax ynmin ynmax])
+title('Hight Wetness','fontsize',10,'fontweight','b','color','k')
+ylabel('Modeled Night Kr','fontsize',10,'fontweight','b','color','k'); 
+xlabel('Day Kr)','fontsize',10,'fontweight','b','color','k');
+text(1,19.5,['$R^2 = ' num2str(r2) '$'],'interpreter','Latex');
+text(1,18,['$p-value = ' num2str(pvalue) '$'],'interpreter','Latex');
+text(1,17,['$Slope = ' num2str(p(1)) '$'],'interpreter','Latex');
+text(1,16,['$Intercept = ' num2str(p(2)) '$'],'interpreter','Latex');
+text(1,15,['$RMSE = ' num2str(rmse) '$'],'interpreter','Latex');
+hold off
+
+subplot(2,3,3)
+e = std(KrD_LH)*ones(size(KrN_LH));
+confplot(KrN_LH,KrD_LH,e); hold on
+plot(KrN_LH,KrD_LH,'r'); hold on; 
+% plot(KrN_LH,KrD_LH,'x'); hold on; 
+[r2,yfit,p,rmse,pvalue] = rsquared_v1(KrN_LH,KrD_LH,1);
+[a2,b2]= robustfit(KrN_LH,KrD_LH); hold on 
+plot(KrN_LH,a2(1)+a2(2).*KrN_LH,'r');hold on
+axis([xnmin xnmax ynmin ynmax])
+title('Low Wetness','fontsize',10,'fontweight','b','color','k')
+ylabel('Modeled Night Kr','fontsize',10,'fontweight','b','color','k'); 
+xlabel('Day Kr)','fontsize',10,'fontweight','b','color','k');
+text(1,19.5,['$R^2 = ' num2str(r2) '$'],'interpreter','Latex');
+text(1,18,['$p-value = ' num2str(pvalue) '$'],'interpreter','Latex');
+text(1,17,['$Slope = ' num2str(p(1)) '$'],'interpreter','Latex');
+text(1,16,['$Intercept = ' num2str(p(2)) '$'],'interpreter','Latex');
+text(1,15,['$RMSE = ' num2str(rmse) '$'],'interpreter','Latex');
+hold off
+end
