@@ -1,7 +1,5 @@
-SoilRespiration
-===============
 
-Project:Synthesis of Soil Respiration data
+Project: Assessing the capacity of predicting daytime and nighttime soil respiration under different moisture conditions across vegetation types
 
 Collaborators:
 Aline Jaimes;
