@@ -1,6 +1,6 @@
 SoilRespiration
 ===============
-Date: 090814
+
 Project:Synthesis of Soil Respiration data
 Author: Aline Jaimes
 
