@@ -5,6 +5,6 @@ Set of functions to evaluate the capacity of predicting daytime and nighttime SR
 
 Collaborators:  Aline Jaimes, Rodrigo Vargas, Benjamin Bond-Lamberty
 
-=== Instructions: ===
+===Instructions:===
 All the functions run from SR_Synthesis.m
 
