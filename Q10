@@ -1,8 +1,8 @@
-% Here we assume that Kr = F0. Where Kr (or K_R) is defined as in Lloyd.
+% Here we assume that Kr = F0. Where Kr (or K_R) is defined as in Lloyd & Taylor, 1994.
 % That is, we are assuming Kr is respiration.
 % The hypothesis is that Respiration is related to temperature in an
 % exponential manner.
-% That is, the hypethesis is:
+% That is, the hypothesis is:
 % 
 % Kr = C1*Q10^Ta,                                                  (EQ.1)
 % where Ta is temperature.
