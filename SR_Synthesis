@@ -1,0 +1,170 @@
+% Author: Aline Jaimes
+% Date: 07/22/2014
+% Name: SR_Synthesis
+% Data Frecuency: hourly and 30min
+% ----------
+clear, close all
+clear functions
+r = [];
+while 1
+    [fname,trayec] = uigetfile('C:\Users\ajaimes\Google Drive\SoilRespiration\*.mat', 'select file: ');
+    
+load (fname)
+ if fname(1)=='F'
+        cu_id=(101:1:282); % Carbon Uptake Period Finland
+        FIN=[F0,NEE, Ta,Reco, SWC;];
+        NEE=FIN(:,2); RS=FIN(:,1); TA=FIN(:,3); R=FIN(:,4); SWC=FIN(:,5);
+        % ===========    From linear regressions  =================
+        % Nightime
+        aN   = 0.5;
+        bN   = 0.081;
+        Q10N =  exp(bN);
+        TN = min(night_TA):.5:max(night_TA);
+
+        % Daytime
+        % y=0.071+0.62
+        aD   = 0.62;
+        bD   =0.071;
+        Q10D =  exp(bD);
+        TD = min(day_TA):.5:max(day_TA);
+        
+         % ===========    From linear regressions under diff wetness conditions  =================
+
+        % Daytime
+            a= -0.014;          b=0.12;             Q10=exp(b);
+            aMeanD=0.72;        bMeanD=0.059;       Q10MeanD=exp(bMeanD);
+            aHighD=0.71;        bHighD=0.066;       Q10HighD=exp(bHighD);
+            aLowD=1.1;          bLowD=0.054;        Q10LowD=exp(bLowD);
+        % Nighttime
+            aMeanN=0.74;        bMeanN=0.056;       Q10MeanN=exp(bMeanN);
+            aHighN=1.8;         bHighN=0.014;       Q10HighN=exp(bHighN);
+            aLowN=0.16;         bLowN=0.026;        Q10LowN=exp(bLowN);
+
+    elseif fname(1)=='S'
+        Stu=[F0,Ta,Reco,SWC];
+        load Stu_30.mat
+        NEE_30min=Stu_30(:,1);
+        NEE= resample(NEE_30min,1,2);
+        RS=Stu(:,1); TA=Stu(:,2); R=Stu(:,3); SWC=Stu(:,4);     
+        id=1:length(NEE);
+        RS=RS(id); TA=TA(id); R=R(id); SWC=SWC(id);      
+        cu_id=(104:1:290); % Carbon Uptake Period STU
+        
+                % ===========    From linear regressions  =================
+        % Nightime
+        aN   = 0.95;
+        bN   = 0.061;
+        Q10N =  exp(bN);
+        TN = min(night_TA):.5:max(night_TA);
+        % 
+        % % Daytime
+        % % y=0.071+0.62
+        aD   = 0.52;
+        bD   =0.091;
+        Q10D =  exp(bD);
+       
+
+        
+         % ===========    From linear regressions under diff wetness conditions  =================
+
+            a=+0.043;        b=0.079;           Q10=exp(b);
+        % Daytime
+            aMeanD=1.4;      bMeanD=0.027;      Q10MeanD=exp(bMeanD);
+            aHighD=0.52;     bHighD=0.024;      Q10HighD=exp(bHighD);
+            aLowD=2;         bLowD=0.026;       Q10LowD=exp(bLowD);
+
+        % Nighttime
+            aMeanN=1.1;     bMeanN=0.047;       Q10MeanN=exp(bMeanN);
+            aHighN=2.2;     bHighN=0.0036;      Q10HighN=exp(bHighN);
+            aLowN=0.93;     bLowN=0.028;        Q10LowN=exp(bLowN);
+            
+    else
+        USoz=[F0,Ta,Reco,SWC];
+        load US_MOZ_30min.mat
+        NEE_30min=US_MOZ_30min(:,1);
+        NEE= resample(NEE_30min,1,2);
+        RS=USoz(:,1); TA=USoz(:,2); R=USoz(:,3); SWC=USoz(:,4);
+        id=1:length(NEE);
+        RS=RS(id); TA=TA(id); R=R(id); SWC=SWC(id); 
+        cu_id=(116:1:287); % Carbon Uptake Period US_MOz
+        
+                % ===========    From linear regressions  =================
+                
+                % % Nightime
+             %
+            aN   = 0.33;
+            bN   = 0.068;
+            Q10N =  exp(bN);
+%             TN = min(night_TA):.5:max(night_TA);
+            % 
+            % % Daytime
+            % y=0.024+0.76
+            aD   = 0.76;
+            bD   =0.024;
+            Q10D =  exp(bD);
+%             TD = min(day_TA):.5:max(day_TA);
+
+
+        % ===========    From linear regressions  =================
+            a=-0.41;    b=0.072;    Q10=exp(b);
+        % Daytime
+            aMeanD=+ 0.71 ;      bMeanD=0.027;      Q10MeanD=exp(bMeanD);
+            aHighD=0.72;         bHighD=0.024;      Q10HighD=exp(bHighD);
+            aLowD=0.13;          bLowD=0.026;       Q10LowD=exp(bLowD);
+        % Nighttime
+            aMeanN=1.1;         bMeanN=0.016;       Q10MeanN=exp(bMeanN);
+            aHighN=1.3;         bHighN=0.019;       Q10HighN=exp(bHighN);
+            aLowN=0.18;         bLowN=0.032;        Q10LowN=exp(bLowN);
+ end
+    
+% Colormaps
+time=(1:1:24);N=length(NEE(:,1)); hrs=24; nday=N/hrs; years=nday/365;
+[a,b,zz,gg,ff]=colormapsV2(TA,RS,R,NEE,SWC);
+% % B. Separate day and night 
+[day_NEE, day_SR, day_Reco, day_TA, day_SWC, night_NEE, night_SR,night_TA, night_Reco,night_SWC]=DayNightCU(a, gg, b, ff,zz,cu_id,fname);
+
+% Model Day and night 
+[CN, CD, TN, TD]=ModelDvsObs_AllData(aN, bN, Q10N, night_TA, aD, bD, Q10D, day_TA, fname);
+
+% E. Separate Humidity: Mean Max, Min
+[NEEMeanWet,NEEHighWet,NEELowWet,RMeanWet,RHighWet,RLowWet,RSMeanWet,RSHighWet,RSLowWet,TAMeanWet,TAHighWet,TALowWet]=WC_Nightime(night_NEE, night_SR, night_Reco, night_TA, night_SWC);
+[NEEMeanWetd,NEEHighWetd,NEELowWetd,RMeanWetd,RHighWetd,RLowWetd,RSMeanWetd,RSHighWetd,RSLowWetd,TAMeanWetd,TAHighWetd,TALowWetd]=WCdaytime(day_NEE, day_SR, day_Reco, day_TA, day_SWC);
+% Subsequent figures below
+% Table_fig1=figure1(night_NEE, night_SR,night_TA, night_Reco,night_SWC,NEEup,Recoup,SRup,TAup, SWCup,NEEMeanWet,NEEHighWet,NEELowWet,RMeanWet,RHighWet,RLowWet,RSMeanWet,RSHighWet,RSLowWet,TAMeanWet,TAHighWet,TALowWet);        
+%--------------
+
+% F. Q10 
+[T1,T2,T3,T4,T5,T6,C1,C2,C3,C4,C5,C6]=Q10(RSMeanWetd,RSMeanWet,RSHighWetd,RSHighWet,RSLowWetd,RSLowWet,TAMeanWetd,TAMeanWet,TAHighWetd, TAHighWet, TALowWet,TALowWetd,TA);
+
+% G.1 Modeling nightime Kr using daytime under different wetness conditions
+[KrN_MH,KrD_MH,KrN_HH,KrD_HH,KrN_LH,KrD_LH]=ModelNvsObs(Q10MeanD,Q10HighD,Q10LowD,T1,T2,T3,T4,T5,T6,C1,C2,C3,fname);
+% G.2 Modeling DAYtime Kr using NIGHTtime Kr equation
+[KrN_MH,KrD_MH,KrN_HH,KrD_HH,KrN_LH,KrD_LH]=ModelDvsObs(Q10MeanN,Q10HighN,Q10LowN,T1,T2,T3,T4,T5,T6,C4,C5,C6,fname);
+
+
+% FIGURES
+ Table_fig1=figure1(night_NEE, night_SR,night_TA, night_Reco,night_SWC,NEEup,Recoup,SRup,TAup, SWCup,NEEMeanWet,NEEHighWet,NEELowWet,RMeanWet,RHighWet,RLowWet,RSMeanWet,RSHighWet,RSLowWet,TAMeanWet,TAHighWet,TALowWet);        
+% [T]=figure2(NEEMeanWet,NEEHighWet,NEELowWet,RMeanWet,RHighWet,RLowWet,RSMeanWetd,RSHighWetd,RSLowWetd,NEEMeanWetd,NEEHighWetd,NEELowWetd,RMeanWetd,RHighWetd,RLowWetd,RSMeanWetd,RSHighWetd,RSLowWetd);        
+%[Table_fig3]=fugure3(RSMeanWetd,RSHighWetd,RSLowWetd, TAMeanWetd,TAHighWetd,TALowWetd,RSMeanWet,RSHighWet,RSLowWet,TAMeanWet,TAHighWet,TALowWet);        
+
+r = upper(input('To load a new file click (s), else anyother character ==> ','s'));
+   if isempty(r)
+      break
+   elseif  r == 'S'
+   else
+      break
+   end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
