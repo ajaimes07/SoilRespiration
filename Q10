@@ -1,0 +1,223 @@
+% Here we assume that Kr = F0. Where Kr (or K_R) is defined as in Lloyd.
+% That is, we are assuming Kr is respiration.
+% The hypothesis is that Respiration is related to temperature in an
+% exponential manner.
+% That is, the hypethesis is:
+% 
+% Kr = C1*Q10^Ta,                                                  (EQ.1)
+% where Ta is temperature.
+%% e.g, Kr = C1*e^T, Kr = C1*2^T, etc... 
+% basically we suppose the relation is exponential but, we do not know what
+% base. That uknown base is denoted Q10.
+%% Given Ta and Kr as measurements, it can be possible to obtain Q10 as
+% follows:
+%% * Linearize (EQ.1) we take Log in base Q10 both side:
+%% Log_Q10(Kr) = Log_Q10(C1) + Ta                                     (EQ.2)
+%% Since we still do not know Q10, we change base to natural base:
+%% Ln(Kr)/Ln(Q10) = Ln(C1)/Ln(Q10) + Ta                            
+% or equivalently,
+%% Ln(Kr) = Ln(C1) + Ln(Q10)*Ta                                      (EQ.3)
+%% Letting a = Ln(C1)     and     b = Ln(Q10), (EQ.3) is rewritten as
+%% Ln(kr) = a + b*Ta
+% Finding a and b from measurements:
+% % Nightime
+% RSMeanWet,RSHighWet,RSLowWet,
+% TAMeanWet,TAHighWet,TALowWet
+% 
+% % Daytime
+% RSMeanWetd,RSHighWetd,RSLowWetd,
+% TAMeanWetd,TAHighWetd,TALowWetd
+function [T1,T2,T3,T4,T5,T6,C1,C2,C3,C4,C5,C6]=Q10(RSMeanWetd,RSMeanWet,RSHighWetd,RSHighWet,RSLowWetd,RSLowWet,TAMeanWetd,TAMeanWet,TAHighWetd, TAHighWet, TALowWet,TALowWetd,TA);
+% Kr = RS;
+% LnKr = log(Kr);
+% figure
+% plot(TA,LnKr,'x');
+% 
+% % === from tool, basic fit: y = 0.079x - 0.043
+% % Then,
+% % b = 0.12, which means from EQ.3:
+% % b=Ln(Q10), Q10 = exp(b)
+% % y=0.12*x-0.014
+% a   = -0.014;
+% b   = 0.12;
+% Q10 =  exp(b);
+T = min(TA):.5:max(TA);
+
+% figure
+% subplot(1,3,1)
+% C = exp(a);
+% y = (C*Q10.^T);
+% e = std(y)*ones(size(T));
+% confplot(T,y,e);hold on
+% plot(TA,Kr,'x'); hold on; 
+% plot(T,C*Q10.^T,'r','LineWidth',1.5); hold on
+% plot(T,C*1.5.^T,'k--','LineWidth',1.5);
+% plot(T,C*1.^T,'k--','LineWidth',1.5);
+% xlim([min(TA) max(TA)]);
+% ylim([0 15]);
+% h= text(0,14,['$Kr = ' num2str(C) '(' num2str(Q10) ')^T$' ],'interpreter','Latex');
+% text(0,13, ['$Q_{10} = ' num2str(Q10) '$'],'interpreter','Latex');
+% text(7,14,['$Kr = ' num2str(C) '(' num2str(1.5) ')^T$' ],'interpreter','Latex');
+% text(25,2,['$Kr = ' num2str(C) '(' num2str(1.0) ')^T$' ],'interpreter','Latex');
+% title('Stu', 'FontName','Times New Roman','FontSize',12)
+% ylabel('K_r [umol/m^2/hr]', 'FontName','Times New Roman','FontSize',10)
+% xlabel('AT [°C]', 'FontName','Times New Roman','FontSize',10)
+% 
+
+Ln_RSMnWetd=log(RSMeanWetd); Ln_RSHgWetd=log(RSHighWetd); Ln_RSLwWetd=log(RSLowWetd);
+Ln_RSMnWetn=log(RSMeanWet);  Ln_RSHgWetn=log(RSHighWet);  Ln_RSLwWetn=log(RSLowWet);
+% 
+% %plot and do linear regression:
+figure
+subplot(2,3,1); plot(TAMeanWetd,Ln_RSMnWetd,'x'); hold on; title('Daytime')
+subplot(2,3,2); plot(TAHighWetd,Ln_RSHgWetd,'x');
+subplot(2,3,3); plot(TALowWetd,Ln_RSLwWetd,'x');
+
+subplot(2,3,4); plot(TAMeanWet,Ln_RSMnWetn,'x'); hold on; title('Nighttime')
+subplot(2,3,5); plot(TAHighWet,Ln_RSHgWetn,'x');
+subplot(2,3,6); plot(TALowWet,Ln_RSLwWetn,'x');
+xlim([min(TA) max(TA)]);
+ylim([0 15]);
+% pause
+
+% ==== Daytime
+
+% aMeanD=0.72;        bMeanD=0.059;       Q10MeanD=exp(bMeanD);
+% aHighD=0.71;        bHighD=0.066;       Q10HighD=exp(bHighD);
+% aLowD=1.1;          bLowD=0.054;        Q10LowD=exp(bLowD);
+
+% ===== Nighttime
+
+% aMeanN=0.74;     bMeanN=0.056;    Q10MeanN=exp(bMeanN);
+% aHighN=1.8;     bHighN=0.014;     Q10HighN=exp(bHighN);
+% aLowN=0.16;     bLowN=0.026;      Q10LowN=exp(bLowN);
+
+
+% T = min(Ta):.5:max(Ta);
+T1 = min(TAMeanWetd):.5:max(TAMeanWetd);
+T2 = min(TAHighWetd):.5:max(TAHighWetd);
+T3 = min(TALowWetd):.5:max(TALowWetd);
+T4 = min(TAMeanWet):.5:max(TAMeanWet);
+T5 = min(TAHighWet):.5:max(TAHighWet);
+T6 = min(TALowWet):.5:max(TALowWet);
+
+close all;
+
+
+figure
+subplot(2,3,1); 
+C1 = exp(aMeanD);
+y1 = (C1*Q10MeanD.^T1);
+e1 = std(y1)*ones(size(T1));
+confplot(T1,y1,e1);hold on
+plot(TAMeanWetd,RSMeanWetd,'x'); hold on; 
+plot(T1,C1*Q10MeanD.^T1,'r','LineWidth',1.5); hold on
+xlim([min(T1) max(T1)]);
+ylim([0 20]);
+text(0,14,['$Kr = ' num2str(C1) '(' num2str(Q10MeanD) ')^T$' ],'interpreter','Latex');
+text(0,13, ['$Q_{10} = ' num2str(Q10MeanD) '$'],'interpreter','Latex');
+title('Mean Wetness', 'FontName','Times New Roman','FontSize',12)
+ylabel('K_r [umol/m^2/hr]', 'FontName','Times New Roman','FontSize',10)
+xlabel('AT [°C]', 'FontName','Times New Roman','FontSize',10)
+
+subplot(2,3,2); 
+C2 = exp(aHighD);
+y2 = (C2*Q10HighD.^T2);
+e = std(y2)*ones(size(T2));
+confplot(T2,y2,e);hold on
+plot(TAHighWetd,RSHighWetd, 'x'); hold on
+plot(T2,C2*Q10HighD.^T2,'r','LineWidth',1.5); hold on
+% plot(T1,C1*1.5.^T1,'k--','LineWidth',1.5);hold on
+% plot(T1,C1*1.^T1,'k--','LineWidth',1.5);hold on
+xlim([min(T1) max(T1)]);
+ylim([0 20]);
+h= text(0,14,['$Kr = ' num2str(C2) '(' num2str(Q10HighD) ')^T$' ],'interpreter','Latex');
+text(0,13, ['$Q_{10} = ' num2str(Q10HighD) '$'],'interpreter','Latex');
+title('High Wetness', 'FontName','Times New Roman','FontSize',12)
+xlabel('AT [°C]', 'FontName','Times New Roman','FontSize',10)
+ylabel('K_r [umol/m^2/hr]', 'FontName','Times New Roman','FontSize',10)
+
+subplot(2,3,3); 
+C3 = exp(aLowD);
+y3 = (C3*Q10LowD.^T3);
+e3 = std(y3)*ones(size(T3));
+confplot(T3,y3,e3);hold on
+plot(TALowWetd,RSLowWetd,'x'); hold on
+plot(T3,C3*Q10LowD.^T3,'r','LineWidth',1.5); hold on
+% plot(T1,C1*1.5.^T1,'k--','LineWidth',1.5);hold on
+% plot(T1,C1*1.^T1,'k--','LineWidth',1.5);hold on
+xlim([min(T1) max(T1)]);
+ylim([0 20]);
+h= text(0,14,['$Kr = ' num2str(C3) '(' num2str(Q10LowD) ')^T$' ],'interpreter','Latex');
+text(0,13, ['$Q_{10} = ' num2str(Q10LowD) '$'],'interpreter','Latex');
+title('Low Wetness', 'FontName','Times New Roman','FontSize',12)
+ylabel('K_r [umol/m^2/hr]', 'FontName','Times New Roman','FontSize',10)
+xlabel('AT [°C]', 'FontName','Times New Roman','FontSize',10)
+
+subplot(2,3,4); 
+C4 = exp(aMeanN);
+y4 = (C4*Q10MeanN.^T4);
+e4 = std(y4)*ones(size(T4));
+confplot(T4,y4,e4);hold on
+plot(TAMeanWet,RSMeanWet,'x'); hold on
+plot(T4,C4*Q10MeanN.^T4,'r','LineWidth',1.5); hold on
+% plot(T1,C1*1.5.^T1,'k--','LineWidth',1.5);hold on
+% plot(T1,C1*1.^T1,'k--','LineWidth',1.5);hold on
+xlim([min(T1) max(T1)]);
+ylim([0 20]);
+h= text(0,14,['$Kr = ' num2str(C4) '(' num2str(Q10MeanN) ')^T$' ],'interpreter','Latex');
+text(0,13, ['$Q_{10} = ' num2str(Q10MeanN) '$'],'interpreter','Latex');
+title('Mean Wetness', 'FontName','Times New Roman','FontSize',12)
+ylabel('K_r [umol/m^2/hr]', 'FontName','Times New Roman','FontSize',10)
+xlabel('AT [°C]', 'FontName','Times New Roman','FontSize',10)
+
+subplot(2,3,5); 
+C5 = exp(aHighN);
+y5 = (C5*Q10HighN.^T5);
+e5 = std(y5)*ones(size(T5));
+confplot(T5,y5,e5);hold on
+plot(TAHighWet,RSHighWet,'x'); hold on
+plot(T5,C5*Q10HighN.^T5,'r','LineWidth',1.5); hold on
+% plot(T1,C1*1.5.^T1,'k--','LineWidth',1.5);hold on
+% plot(T1,C1*1.^T1,'k--','LineWidth',1.5);hold on
+xlim([min(T1) max(T1)]);
+ylim([0 20]);
+h= text(0,14,['$Kr = ' num2str(C5) '(' num2str(Q10HighN) ')^T$' ],'interpreter','Latex');
+text(0,13, ['$Q_{10} = ' num2str(Q10HighN) '$'],'interpreter','Latex');
+title('High Wetness', 'FontName','Times New Roman','FontSize',12)
+ylabel('K_r [umol/m^2/hr]', 'FontName','Times New Roman','FontSize',10)
+xlabel('AT[°C]', 'FontName','Times New Roman','FontSize',10)
+
+subplot(2,3,6); 
+C6 = exp(aLowN);
+y6 = (C6*Q10LowN.^T6);
+e6 = std(y6)*ones(size(T6));
+confplot(T6,y6,e6);hold on
+plot(TALowWet,RSLowWet,'x'); hold on
+plot(T6,C6*Q10LowN.^T6,'r','LineWidth',1.5); hold on
+% plot(T1,C1*1.5.^T1,'k--','LineWidth',1.5);hold on
+% plot(T1,C1*1.^T1,'k--','LineWidth',1.5);hold on
+xlim([min(T1) max(T1)]);
+ylim([0 20]);
+h= text(0,14,['$Kr = ' num2str(C6) '(' num2str(Q10LowN) ')^T$' ],'interpreter','Latex');
+text(0,13, ['$Q_{10} = ' num2str(Q10LowN) '$'],'interpreter','Latex');
+title('Low Wetness', 'FontName','Times New Roman','FontSize',12)
+xlabel('AT [°C]', 'FontName','Times New Roman','FontSize',10)
+ylabel('K_r [umol/m^2/hr]', 'FontName','Times New Roman','FontSize',10)
+
+figure
+subplot(2,2,1)
+plot(T1,'rx'); hold on
+plot(T2,'bx'); hold on
+plot(T3,'gx'); hold on
+plot(T4,'yx'); hold on
+plot(T5,'mx'); hold on
+plot(T6,'kx'); grid on
+
+end
+
+
+
+
+
+
